@@ -42,32 +42,32 @@ def plot_confusion_matrix(cm, classes,
 #   where the records are classified in two classes
 # the first is the class with the bigger number of records and the other class includes
 #   the records of the rest classes with smaller number of records   
-def one_vs_rest(df):
-    df[295].unique()
+def one_vs_rest(df1):
+    df1[295].unique()
     class_samples = {}
  # for each class in column 295   
-    for i in df[295].unique(): 
+    for i in df1[295].unique(): 
 # find the records that belong in class i and put the pair class-number of records
 # in a dictionary    
-        class_samples.update({i:(len(df[df[295] == i].axes[0]))})
+        class_samples.update({i:(len(df1[df1[295] == i].axes[0]))})
     print(class_samples)    
     global maximum 
 # find the class with the max number of records    
     maximum = max(class_samples, key=class_samples.get)
 # if the class is this with the max number of records assign to it the value 1   
      # otherwise assign to the class the value 0    
-    df[295].loc[df[295] != maximum] = 10
-    df[295].loc[df[295] == maximum] = 11
-    df[295].replace(10, 0, inplace=True)
-    df[295].replace(11, 1, inplace=True)
+    df1295].loc[df1[295] != maximum] = 10
+    df1295].loc[df1[295] == maximum] = 11
+    df1[295].replace(10, 0, inplace=True)
+    df1[295].replace(11, 1, inplace=True)
 # asign to y the column 295 
-    y = df[[295]]
+    y = df1[[295]]
  # and drop column 295 from the df       
-    df.drop(df.columns[295], axis = 1, inplace = True)
+    df1.drop(df1.columns[295], axis = 1, inplace = True)
 # standardize the features of df  
-    std_scale = preprocessing.StandardScaler().fit(df)
-    df_std = std_scale.transform(df)
-    df_std = pd.DataFrame(df_std, columns = df.columns)
+    std_scale = preprocessing.StandardScaler().fit(df1)
+    df_std = std_scale.transform(df1)
+    df_std = pd.DataFrame(df_std, columns = df1.columns)
  # assign df to X       
     X = df_std
 #  use 10 folds for cross validation   
@@ -104,7 +104,7 @@ label_encoder = preprocessing.LabelEncoder()
 df[[295]] = label_encoder.fit_transform(df[[295]]) 
 # droping the three classes with the bigger numbers records and making prediction
 # for the other two
-df1 = df
+df1 = df.copy()
 
 #df1 = df.drop(df[df[295] == 2].index)
 #df1 = df1.drop(df[df[295] == 3].index)
