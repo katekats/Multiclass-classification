@@ -78,12 +78,12 @@ def one_vs_rest(df1):
         X_train, X_test = X.ix[train], X.ix[test]
         y_train, y_test = y.ix[train], y.ix[test]
  # training
-        log_model.fit(X_train,y_train) 
+        log_model.fit(X_train.as_matrix(), y_train.as_matrix().ravel()) 
 # testing
-        y_predict = log_model.predict(X_test) 
+        y_predict = log_model.predict(X_test.as_matrix()) 
 # call the confusion matrix 
-        cnf_matrix = confusion_matrix(y_test, y_predict)
-        print(accuracy_score(y_test, y_predict))
+        cnf_matrix = confusion_matrix(y_test.as_matrix().ravel(), y_predict)
+        print(accuracy_score(y_test.as_matrix().ravel(), y_predict))
 
     np.set_printoptions(precision=2)
 
