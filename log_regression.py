@@ -98,7 +98,7 @@ def one_vs_rest(df):
       plot_confusion_matrix(cnf_matrix, classes=[0, 1],
                       title='Normalized confusion matrix')
       plt.show()
-      # drop the records that belongs to the maximum class
+      # drop the records that belong to the maximum class
       df1 = df1.drop(df1[df1[295] == maximum].index)
       df1.index = range(len(df1.axes[0]))
       # delete this class from the class_samples
