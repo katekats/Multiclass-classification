@@ -42,41 +42,45 @@ def plot_confusion_matrix(cm, classes,
 #   where the records are classified in two classes
 # the first is the class with the bigger number of records and the other class includes
 #   the records of the rest classes with smaller number of records   
-def one_vs_rest(df1):
-    df1[295].unique()
+def one_vs_rest(df):
+# for the first 1000 records  
+    df1 = df.iloc[0:1000,:]
     class_samples = {}
- # for each class in column 295   
+ # for each class in column 295 
     for i in df1[295].unique(): 
 # find the records that belong in class i and put the pair class-number of records
 # in a dictionary    
-        class_samples.update({i:(len(df1[df1[295] == i].axes[0]))})
-    print(class_samples)    
+      class_samples.update({i:(len(df1[df1[295] == i].axes[0]))})
     global maximum 
-# find the class with the max number of records    
-    maximum = max(class_samples, key=class_samples.get)
+# for the four possible binary classifications    
+    for j in range(4): 
+      df2 = df1.copy()
+# find the class with the max number of records
+      maximum = max(class_samples, key=class_samples.get)
 # if the class is this with the max number of records assign to it the value 1   
      # otherwise assign to the class the value 0    
-    df1295].loc[df1[295] != maximum] = 10
-    df1295].loc[df1[295] == maximum] = 11
-    df1[295].replace(10, 0, inplace=True)
-    df1[295].replace(11, 1, inplace=True)
+     # print (df2)
+      df2[295].loc[df2[295] != maximum] = 10
+      df2[295].loc[df2[295] == maximum] = 11
+      df2[295].replace(10, 0, inplace=True)
+      df2[295].replace(11, 1, inplace=True)
+     # print(df2)
 # asign to y the column 295 
-    y = df1[[295]]
+      y = df2[[295]]
  # and drop column 295 from the df       
-    df1.drop(df1.columns[295], axis = 1, inplace = True)
 # standardize the features of df  
-    std_scale = preprocessing.StandardScaler().fit(df1)
-    df_std = std_scale.transform(df1)
-    df_std = pd.DataFrame(df_std, columns = df1.columns)
+      std_scale = preprocessing.StandardScaler().fit(df2.iloc[:, 0:295])
+      df_std = std_scale.transform(df2.iloc[:, 0:295])
+      df_std = pd.DataFrame(df_std)
  # assign df to X       
-    X = df_std
+      X = df_std
 #  use 10 folds for cross validation   
-    cv = KFold(n_splits=10)
+      cv = KFold(n_splits=10)
  # use MLP model with L1 with the parameters from grid_search_cv  
-    mlp_model = MLPClassifier(solver='lbfgs', alpha=1e-5,
+      mlp_model = MLPClassifier(solver='lbfgs', alpha=1e-5,
                     hidden_layer_sizes=(90, 2), random_state=1)  
  # use 10 cross validation for taining & testing the model   
-    for train, test in cv.split(X,y):
+      for train, test in cv.split(X,y):
         X_train, X_test = X.ix[train], X.ix[test]
         y_train, y_test = y.ix[train], y.ix[test]
  # training
@@ -87,14 +91,19 @@ def one_vs_rest(df1):
         cnf_matrix = confusion_matrix(y_test.as_matrix().ravel(), y_predict)
         print(accuracy_score(y_test.as_matrix().ravel(), y_predict))
 
-    np.set_printoptions(precision=2)
+      np.set_printoptions(precision=2)
 
 # Plot normalized confusion matrix
-    plt.figure()
-    plt.show()
-    plot_confusion_matrix(cnf_matrix, classes=[0, 1],
+      plt.figure()
+      plt.show()
+      plot_confusion_matrix(cnf_matrix, classes=[0, 1],
                       title='Normalized confusion matrix')
-    plt.show()
+      plt.show()
+ # drop the records that belong to the maximum class     
+      df1 = df1.drop(df1[df1[295] == maximum].index)
+      df1.index = range(len(df1.axes[0]))
+ # delete the maximum class from class_samples   
+      del class_samples[maximum]
 #
      
 # read a csv file     
